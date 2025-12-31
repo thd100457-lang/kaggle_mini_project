@@ -5,17 +5,22 @@
   <img src="https://img.shields.io/badge/xgboost-black?style=for-the-badge&logo=xgboost&logoColor=white">
 </div>
 
-# 📖 프로젝트 주제 : 당뇨병 예측 모델링: 통계분석 및 머신러닝 접근
-- 데이터틀 기반으로 생활 습관, 건강 지표 확인용... (프로젝트 전체 요약, executive summary)
+
+## 프로젝트 주제 : 머신러닝 기반 당뇨병 진단 예측 모델
+- 당뇨병 진단 여부와 관련된 다양한 위험 요인들을 탐색하고, 
+각 요인들이 당뇨병 발생과 어떤 통계적 관련성을 가지는지 검증
 
 ## 1. Project Overview 
-- **주제** : 생활 습관 또는 신체 상태를 활용한 당뇨병 유무 분류
+- **주제** : 생활 습관 및 건강 지표를 활용한 당뇨병 유무 분류
 - **데이터셋** : [Diabetes Health Indicators Dataset](https://www.kaggle.com/datasets/mohankrishnathalla/diabetes-health-indicators-dataset/data)
-- **핵심 목표** : 설문지를 활용해서 **당뇨병 고위험군을 선별할 수 있는 예측 모델** 구축
+- **핵심 목표** : 
+    1. 당뇨병과 관련된 주요 위험 요인을 통계적으로 검증
+    2. 머신러닝 기반 예측 모델을 통해 고위험군 선별 가능성 평가
 
 ## 2. Data Dictionary (주요 핵심 변수)
-- 실제 분석 결과를 통해서 확보한 변수들의 기재
-- 총 변수갯수 : 31개
+- 관측치 수 : 약 25만 건
+- 변수 개수 : 총 31개
+- 타겟 변수 : Diabetes_binary
 
 | 변수명 | 설명 | 값의 의미 |
 | :--- | :--- | :--- |
@@ -32,54 +37,72 @@
 | Income | 소득 수준 | 1(최저) ~ 8(최고) |
 
 ## 3. Problem Definition
-- **데이터 특성** : blah
+- **데이터 특성** : 
+    + 대규모 설문 데이터로 이진형 변수 비중이 높음
+    + Diabetes_binary 기준 클래스 불균형 존재 (비당뇨 다수)
+    + 의료 수치(혈당 등) 없이 행동·생활 습관 변수 중심
 - **분석 방향**
     + 통계분석 : 다중회귀, 분산분석, 로지스틱회귀
     + 머신러닝 : 로지스틱회귀, 결정트리, XGBoost, LightGBM 
 
 ## 4. Data Preprocessing
-- **클래스 불균형 해소** : blah
+- **클래스 불균형 해소** : 타겟 변수 비율 불균형으로 인해
+→ Stratified Sampling + Class Weight 조정 적용
 - **범주형 변수 처리**
-    + 순서형 : ordinal encoder 처리 (A, B, C)
-    + 일반 범주 : One-Hot Encoding 처리
-- **데이터 스케일링** : StandardScaler(표준화)
+    + 순서형 : Age, GenHlth, Income
+→ Ordinal Encoding 적용
+    + 이진 변수 : 0 / 1 유지
+- **데이터 스케일링** : Logistic Regression 등 선형 모델 적용을 위해
+→ StandardScaler(표준화) 적용
 
 ## 5. 통계분석 핵심 인사이트
-- 혈당이 중요함 : 다른 알려진 요인(나이, BMI)보다 통계적으로 매우 훨씬, 강력하게, 유의미하게 영향이 있음을 확인 (via 회귀분석)
-![Q-Q Plot](output/qqplot.png)
+- 로지스틱 회귀 결과
+    + 당뇨병 발생과 통계적으로 유의미한 양(+)의 관계를 보인 변수:
+        - Age
+        - BMI
+        - HighBP
+        - HighChol
+        - HeartDiseaseorAttack
+        - GenHlth
+
+특히, **연령(Age)**과 BMI는 다른 변수들을 통제한 상태에서도 가장 강력한 설명력을 보임
+주관적 건강 상태(GenHlth)가 나쁠수록 당뇨병 확률 증가
 
 ## 6. 모델링 평가지표
-- 최종 모델은 XGBoost로 선정
+- 최종 선택 모델: XGBoost
+- 선정 이유:
+    + 가장 높은 Recall 및 F1-score
+    + AUC-ROC 기준에서도 안정적인 분류 성능
+    + 당뇨병 조기 선별이라는 프로젝트 목적에 부합
 
-| Model | Accuracy | Recall | F1-Score | AUC-ROC |
-| :--- | :--- | :--- | :--- | :--- |
-| Random Forest | 0.85 | 0.70 | 0.74 | 0.88 |
-| **XGBoost** | **0.86** | **0.75** | **0.78** | **0.91** |
+| Model               | AUC-ROC   | Accuracy  | Precision | Recall    | F1-Score  |
+| ------------------- | --------- | --------- | --------- | --------- | --------- |
+| Logistic Regression | 0.693     | 0.626     | 0.754     | 0.593     | 0.664     |
+| Decision Tree       | 0.694     | 0.630     | 0.752     | 0.606     | 0.672     |
+| **XGBoost**         | **0.721** | **0.681** | 0.703     | **0.845** | **0.768** |
+| LightGBM            | 0.725     | 0.654     | **0.773** | 0.630     | 0.694     |
 
 > **Note** : 최종 대회 결과는 Public 0.70807 / Private 0.70807 (feat. 1등 점수). 
 
-> **Note** : 최종 대회 결과는 Public 0.70807 / Private 0.70807 (상위 10%). 
 
-## 7. Feature Importance (옵션)
-- SHAP 활용
-- 예측 모델에서 영향력이 가장 컸던 지표 순위
-1. AGE
-2. BMI
-- 그림 추가
+## 7. Feature Importance (SHAP 기반)
+- XGBoost + SHAP 분석 결과
+- 당뇨병 예측에 가장 영향력이 큰 변수
+    + Age
+    + BMI
+    + GenHlth
+    + HighBP
+    + HighChol
+    → 생활 습관 및 만성질환 관련 변수가 복합적으로 작용함을 시사
 
 ## 8. Conclusion
-- 결론1
-- 결론2
-- 결론3
+- 설문 기반 건강 데이터만으로도 당뇨병 위험 예측이 가능함을 확인
+- 연령, BMI, 고혈압·고지혈증 등 기존 의학적 위험 요인이
+통계분석과 머신러닝 모두에서 일관되게 중요하게 나타남
+- 본 모델은 의료 접근성이 낮은 환경에서 사전 선별 도구로 활용 가능성 존재
 
 # 보고서
 - 프로젝트 상세 보고서는 PDF 슬라이드 자료를 참고하여 주세요
-- 00 보고서 : [당뇨병 예측 모델링: 통계분석 및 머신러닝 접근](report/프로젝트보고서.pdf)
+-  보고서 : [머신러닝 기반 당뇨병 진단 예측 모델](report/프로젝트보고서.pdf)
 - 분석코드 : [분석코드](분석코드.ipynb)
 
-# 🔗 배지 및 이모지 공식 소스 링크
-| 용도 | 사이트 이름 | 링크 |
-| :--- | :--- | :--- |
-| **배지 생성** | Shields.io | [https://shields.io/](https://shields.io/) |
-| **로고/색상 검색** | Simple Icons | [https://simpleicons.org/](https://simpleicons.org/) |
-| **이모지 검색** | Emoji Cheat Sheet | [https://github.com/ikatyang/emoji-cheat-sheet](https://github.com/ikatyang/emoji-cheat-sheet) |
