@@ -12,6 +12,7 @@
 
 ## 1. Project Overview 
 - **주제** : 생활 습관 및 건강 지표를 활용한 당뇨병 유무 분류
+- ***프로젝트 기간** : 2025/12/29 ~ 2025/12/30
 - **데이터셋** : [Diabetes Health Indicators Dataset](https://www.kaggle.com/datasets/mohankrishnathalla/diabetes-health-indicators-dataset/data)
 - **핵심 목표** : 
     1. 당뇨병과 관련된 주요 위험 요인을 통계적으로 검증
@@ -64,6 +65,8 @@
         - HighChol
         - HeartDiseaseorAttack
         - GenHlth
+
+![Q-Q plot](output/qqplot.jpg)
 
 특히, **연령(Age)**과 BMI는 다른 변수들을 통제한 상태에서도 가장 강력한 설명력을 보임
 주관적 건강 상태(GenHlth)가 나쁠수록 당뇨병 확률 증가
