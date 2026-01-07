@@ -90,13 +90,13 @@
 
 
 ## 7. Feature Importance (XGBoost 기반 – pandas + seaborn 시각화)
-XGBoost 모델에서 산출된 Feature Importance 값을 pandas DataFrame으로 정리한 후, seaborn barplot을 활용하여 변수 중요도를 시각화함
-분석 결과, 당뇨병 예측에 가장 영향력이 큰 변수는 다음과 같음
-- Age
-- BMI
-- GenHlth
-- HighBP
-- HighChol
+- XGBoost 모델에서 산출된 Feature Importance 값을 pandas DataFrame으로 정리한 후, seaborn barplot을 활용하여 변수 중요도를 시각화함
+- 분석 결과, 당뇨병 예측에 가장 영향력이 큰 변수는 다음과 같음
+    + Age
+    + BMI
+    + GenHlth
+    + HighBP
+    + HighChol
 ![Q-Q plot](output/qqplot1.jpg)
 → 생활 습관(연령, 비만도, 주관적 건강 상태)과
 만성질환 관련 변수(고혈압, 고지혈증)가
